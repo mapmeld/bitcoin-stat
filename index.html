@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <style type="text/css">
+html{ font-family: arial, sans-serif; margin: 0; padding: 0; }
+body{ margin: 25px; }
+#chartworld{ width: 80%; height: 350px; }
+    </style>
+  </head>
+  <body>
+    <h3>Bitcoin-Stat</h3>
+    <div id="chartworld">
+    </div>
+    <p>I don't know anything about currency trading or investment because I've never done
+    either before. Trying to learn the economics of what I'm doing.</p>
+    <p>Auto-updating BTC prices from <a href="http://www.quandl.com/api/v1/datasets/BITCOIN/MTGOXUSD.json?&trim_start=2013-10-14">Quandl</a></p>
+    <p>Lines are: 1 Bitcoin, My Account, Purchases (directly through Bitcoin), and USD in (lowers when I take money out)</p>
+    <p>Profit = Account + Purchases - USD_In = $<span id="profit"></span></p>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript">
+$.getJSON("/coin", function(response){
+  var prices = response.data;
+  prices.reverse();
+  
+  var accountHistory = [
+    ["2013-10-15", 0.5, "usd"],
+    ["2013-10-22", -0.116, "purchase"],
+    ["2013-10-22", 0.5, "usd"],
+    ["2013-10-25", -0.1, "usd"],
+  ];
+  var account = [ ];
+  var a = 0;
+  var btc = 0;
+  
+  var purchases = [ ];
+  var btc_purchases = 0;
+
+  var transfers = [ ];
+  var btc_transfers = 0;
+  
+  var spent = [ ];
+  var usd_out = 0;
+
+  for(var p=0;p<prices.length;p++){
+    while(a < accountHistory.length && prices[p][0] == accountHistory[a][0]){
+      btc += accountHistory[a][1];
+      if(accountHistory[a][1] < 0){
+        if(accountHistory[a][2] == "usd"){
+          btc_transfers -= accountHistory[a][1];
+          usd_out += accountHistory[a][1] * prices[p][1];
+        }
+        else{
+          btc_purchases -= accountHistory[a][1];
+        }
+      }
+      else{
+        usd_out += accountHistory[a][1] * prices[p][1];
+      }
+      a++;
+    }
+    account.push([ prices[p][0], btc * prices[p][1] ]);
+    purchases.push([ prices[p][0], btc_purchases * prices[p][1] ]);
+    spent.push([ prices[p][0], usd_out ]);
+  }
+  $("#profit").text( (account[account.length-1][1] + purchases[purchases.length-1][1] - spent[spent.length-1][1]).toFixed(2) );
+  
+  $("#chartworld").highcharts({
+    yAxis: {
+      title: {
+        text: 'USD'
+      },
+      min: 10
+    },
+    title: {
+      text: ""
+    },
+    series: [{
+      name: "1 Bitcoin",
+      data: prices
+    },
+    {
+      name: "My Account",
+      data: account
+    },
+    {
+      name: "Purchases",
+      data: purchases
+    },
+    {
+      name: "USD in",
+      data: spent
+    }]
+  });
+});
+    </script>
+  </body>
+</html>

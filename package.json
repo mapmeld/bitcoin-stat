@@ -1,0 +1,18 @@
+{
+    "name": "bitcoin-stat"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "3.X"
+    , "jade": ">= 0.0.1"
+    , "request": "2.21.X"
+  },
+  "engines": {
+        "node": "0.8.X",
+        "npm":  "1.1.x"
+  },
+  "scripts": {
+      "start": "node app.js",
+      "test": "mocha -R tap --ignore-leaks"
+  }
+}
