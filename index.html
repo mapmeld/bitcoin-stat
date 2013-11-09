@@ -39,9 +39,6 @@ $.getJSON("/coin", function(response){
   
   var purchases = [ ];
   var btc_purchases = 0;
-
-  var transfers = [ ];
-  var btc_transfers = 0;
   
   var spent = [ ];
   var usd_out = 0;
@@ -49,17 +46,11 @@ $.getJSON("/coin", function(response){
   for(var p=0;p<prices.length;p++){
     while(a < accountHistory.length && prices[p][0] == accountHistory[a][0]){
       btc += accountHistory[a][1];
-      if(accountHistory[a][1] < 0){
-        if(accountHistory[a][2] == "usd"){
-          btc_transfers -= accountHistory[a][1];
-          usd_out += accountHistory[a][1] * prices[p][1];
-        }
-        else{
-          btc_purchases -= accountHistory[a][1];
-        }
+      if(accountHistory[a][2] == "usd"){
+        usd_out += accountHistory[a][1] * prices[p][1];
       }
       else{
-        usd_out += accountHistory[a][1] * prices[p][1];
+        btc_purchases -= accountHistory[a][1];
       }
       a++;
     }
