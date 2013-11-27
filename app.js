@@ -16,6 +16,15 @@ app.get('/coin', function(req, res) {
   });
 });
 
+app.get('/current', function(req, res) {
+  var requestOptions = {
+    'uri': 'https://coinbase.com/api/v1/prices/spot_rate'
+  };
+  request(requestOptions, function (err, response, b) {
+    res.json( JSON.parse( b ) );
+  });
+});
+
 var port = process.env.PORT || 3000;
 app.configure(function() {
     app.use(express.compress());
