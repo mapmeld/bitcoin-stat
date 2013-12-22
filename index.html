@@ -136,6 +136,7 @@ function plotCoins(currentRate, pastData, dogeData){
 
 function dogeFromBitcoin(date){
   var btc_price = 0;
+  var dt = (new Date(date)) * 1;
   for(var d=0;d<pastDoge.length;d++){
     if(pastDoge[d].time * 1 < dt){
       btc_price = pastDoge[d].price;
@@ -150,7 +151,6 @@ function dogeFromBitcoin(date){
 
 function dogePrice(date){
   // estimate USD value of 1 Dogecoin at given day
-  var dt = (new Date(date)) * 1;
   var btc_price = dogeFromBitcoin(date);
 
   for(var p=0;p<prices.length;p++){
