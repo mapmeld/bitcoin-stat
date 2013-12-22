@@ -153,6 +153,20 @@ function dogePrice(date){
       return btc_price * prices[p][1];
     }
   }
+  // failed to match exact date - no prob
+  var closest = 1000 * 60 * 60 * 24 * 30;
+  var closest_btc = 0;
+  date = new Date(date);
+  date *= 1;
+  for(var p=0;p<prices.length;p++){
+    var dt = new Date(prices[p][0]);
+    dt *= 1;
+    if(Math.abs(dt - date) < closest){
+      closest = Math.abs(dt - date);
+      closest_btc = prices[p][1];
+    }
+  }
+  return btc_price * closest_btc;
 }
     </script>
   </body>
