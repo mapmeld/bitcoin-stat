@@ -1,7 +1,7 @@
 var express = require('express');
 var request = require('request');
 var mongoose = require('mongoose');
-var csv = require('fast-csv');
+var csv = require('csv-stream');
 
 var uristring = process.env.MONGOLAB_URI;
 var priceSchema = new mongoose.Schema({
