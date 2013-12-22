@@ -98,8 +98,13 @@ function plotCoins(currentRate, pastData, dogeData){
     account.push([ prices[p][0], btc * prices[p][1] ]);
     purchases.push([ prices[p][0], btc_purchases * prices[p][1] ]);
     spent.push([ prices[p][0], usd_out ]);
-    if(with_doge && doge){
-      doges.push([ prices[p][0], dogePrice( prices[p][0] ) * doge ]);
+    if(with_doge){
+      if(doge){
+        doges.push([ prices[p][0], dogePrice( prices[p][0] ) * doge ]);
+      }
+      else{
+        doges.push([ prices[p][0], 0 ]);
+      }
     }
   }
 
