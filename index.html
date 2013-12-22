@@ -65,7 +65,7 @@ function plotCoins(currentRate, pastData, dogeData){
     ["2013-12-22", -0.002, "doge"]
   ];
   var account = [ ];
-  var a = 0;
+  var last_a = 0;
   var btc = 0;
 
   var purchases = [ ];
@@ -78,16 +78,20 @@ function plotCoins(currentRate, pastData, dogeData){
   var doge = 0;
 
   for(var p=0;p<prices.length;p++){
-    while(a < accountHistory.length && prices[p][0] == accountHistory[a][0]){
-      btc += accountHistory[a][1];
-      if(accountHistory[a][2] == "usd"){
-        usd_out += accountHistory[a][1] * prices[p][1];
-      }
-      else if(accountHistory[a][2] == "doge"){
-        doge -= accountHistory[a][1] / bitcoinPerDoge( accountHistory[a][0] );
-      }
-      else{
-        btc_purchases -= accountHistory[a][1];
+    var a = last_a;
+    while(a < accountHistory.length){
+      if(prices[p][0] == accountHistory[a][0]){
+        btc += accountHistory[a][1];
+        if(accountHistory[a][2] == "usd"){
+          usd_out += accountHistory[a][1] * prices[p][1];
+        }
+        else if(accountHistory[a][2] == "doge"){
+          doge -= accountHistory[a][1] / bitcoinPerDoge( accountHistory[a][0] );
+        }
+        else{
+          btc_purchases -= accountHistory[a][1];
+        }
+        last_a = a;
       }
       a++;
     }
