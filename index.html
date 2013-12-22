@@ -84,7 +84,7 @@ function plotCoins(currentRate, pastData, dogeData){
         usd_out += accountHistory[a][1] * prices[p][1];
       }
       else if(accountHistory[a][2] == "doge"){
-        doge -= dogePrice( accountHistory[a][0] ) * accountHistory[a][1];
+        doge -= dogeFromBitcoin( accountHistory[a][1] );
       }
       else{
         btc_purchases -= accountHistory[a][1];
@@ -95,7 +95,7 @@ function plotCoins(currentRate, pastData, dogeData){
     purchases.push([ prices[p][0], btc_purchases * prices[p][1] ]);
     spent.push([ prices[p][0], usd_out ]);
     if(with_doge && doge){
-      doges.push([ prices[p][0], doge ]);
+      doges.push([ prices[p][0], dogePrice( prices[p][0] ) * doge ]);
     }
   }
 
@@ -134,9 +134,7 @@ function plotCoins(currentRate, pastData, dogeData){
   });
 }
 
-function dogePrice(date){
-  // estimate USD value of 1 Dogecoin at given day
-  var dt = (new Date(date)) * 1;
+function dogeFromBitcoin(date){
   var btc_price = 0;
   for(var d=0;d<pastDoge.length;d++){
     if(pastDoge[d].time * 1 < dt){
@@ -147,6 +145,13 @@ function dogePrice(date){
   if(!btc_price){
     btc_price = pastDoge[0].price;
   }
+  return btc_price;
+}
+
+function dogePrice(date){
+  // estimate USD value of 1 Dogecoin at given day
+  var dt = (new Date(date)) * 1;
+  var btc_price = dogeFromBitcoin(date);
 
   for(var p=0;p<prices.length;p++){
     if(prices[p][0] == date){
