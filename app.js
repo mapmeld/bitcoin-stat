@@ -1,6 +1,7 @@
 var express = require('express');
 var request = require('request');
 var mongoose = require('mongoose');
+var csv = require('fast-csv');
 
 var uristring = process.env.MONGOLAB_URI;
 var priceSchema = new mongoose.Schema({
@@ -21,11 +22,19 @@ app.get('/', function(req, res) {
 
 app.get('/coin', function(req, res) {
   var requestOptions = {
-    'uri': 'http://www.quandl.com/api/v1/datasets/BITCOIN/MTGOXUSD.json?&trim_start=2013-10-14'
+    'uri': 'https://api.bitcoinaverage.com/history/USD/per_day_all_time_history.csv'
   };
-  request(requestOptions, function (err, response, b) {
-    res.json( JSON.parse( b ) );
-  });
+  var csvStream = csv.createStream();
+  var prices = {
+    data: [ ]
+  };
+  request(requestOptions).pipe(csvStream)
+    .on('data',function(data){
+      prices.data.push([ data.datetime.split(" ")[0], data.average ]);
+    })
+    .on('end',function(){
+    
+    });
 });
 
 app.get('/current', function(req, res) {
