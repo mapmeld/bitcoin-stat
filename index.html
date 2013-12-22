@@ -21,88 +21,139 @@ body{ margin: 25px; }
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript">
+var with_doge = true;
+var pastDoge = null;
+var prices;
+
 $.getJSON("/current", function(currentRate){
-  $.getJSON("/coin", function(response){
-    var prices = response.data;
-    prices.reverse();
-    
-    var today = new Date();
-    today = today.toISOString().split("T")[0];
-    prices.push([
-      today,
-      currentRate.amount * 1
-    ]);
-  
-    var accountHistory = [
-      ["2013-10-15", 0.5, "usd"],
-      ["2013-10-22", -0.116, "purchase"],
-      ["2013-10-22", 0.5, "usd"],
-      ["2013-10-25", -0.1, "usd"],
-      ["2013-10-27", -0.0634, "purchase"],
-      ["2013-11-08", 0.114, "purchase"],
-      ["2013-11-10", -0.2, "usd"],
-      ["2013-11-17", 0.1, "usd"],
-      ["2013-11-27", 0.2654, "usd"],
-      ["2013-12-01", -0.2654, "usd"],
-      ["2013-12-15", -0.0166, "purchase"]
-    ];
-    var account = [ ];
-    var a = 0;
-    var btc = 0;
-  
-    var purchases = [ ];
-    var btc_purchases = 0;
-  
-    var spent = [ ];
-    var usd_out = 0;
-
-    for(var p=0;p<prices.length;p++){
-      while(a < accountHistory.length && prices[p][0] == accountHistory[a][0]){
-        btc += accountHistory[a][1];
-        if(accountHistory[a][2] == "usd"){
-          usd_out += accountHistory[a][1] * prices[p][1];
-        }
-        else{
-          btc_purchases -= accountHistory[a][1];
-        }
-        a++;
-      }
-      account.push([ prices[p][0], btc * prices[p][1] ]);
-      purchases.push([ prices[p][0], btc_purchases * prices[p][1] ]);
-      spent.push([ prices[p][0], usd_out ]);
+  $.getJSON("/coin", function(pastData){
+    if(with_doge){
+      $.getJSON("/doge", function(dogeData){
+        pastDoge = dogeData;
+        plotCoins(currentRate, pastData, dogeData);
+      });
     }
-
-    $("#profit").text( (account[account.length-1][1] + purchases[purchases.length-1][1] - spent[spent.length-1][1]).toFixed(2) );
-  
-    $("#chartworld").highcharts({
-      yAxis: {
-        title: {
-          text: 'USD'
-        },
-        min: 10
-      },
-      title: {
-        text: ""
-      },
-      series: [{
-        name: "1 Bitcoin",
-        data: prices
-      },
-      {
-        name: "My Account",
-        data: account
-      },
-      {
-        name: "Purchases",
-        data: purchases
-      },
-      {
-        name: "USD in",
-        data: spent
-      }]
-    });
+    else{
+      plotCoins(currentRate, pastData, []);
+    }
   });
 });
+
+function plotCoins(currentRate, pastData, dogeData){
+  prices = pastData.data;
+  prices.reverse();
+    
+  var today = new Date();
+  today = today.toISOString().split("T")[0];
+  prices.push([
+    today,
+    currentRate.amount * 1
+  ]);
+  
+  var accountHistory = [
+    ["2013-10-15", 0.5, "usd"],
+    ["2013-10-22", -0.116, "purchase"],
+    ["2013-10-22", 0.5, "usd"],
+    ["2013-10-25", -0.1, "usd"],
+    ["2013-10-27", -0.0634, "purchase"],
+    ["2013-11-08", 0.114, "purchase"],
+    ["2013-11-10", -0.2, "usd"],
+    ["2013-11-17", 0.1, "usd"],
+    ["2013-11-27", 0.2654, "usd"],
+    ["2013-12-01", -0.2654, "usd"],
+    ["2013-12-15", -0.0166, "purchase"],
+    ["2013-12-21", -0.002, "doge"]
+  ];
+  var account = [ ];
+  var a = 0;
+  var btc = 0;
+
+  var purchases = [ ];
+  var btc_purchases = 0;
+
+  var spent = [ ];
+  var usd_out = 0;
+  
+  var doges = [ ];
+  var doge = 0;
+
+  for(var p=0;p<prices.length;p++){
+    while(a < accountHistory.length && prices[p][0] == accountHistory[a][0]){
+      btc += accountHistory[a][1];
+      if(accountHistory[a][2] == "usd"){
+        usd_out += accountHistory[a][1] * prices[p][1];
+      }
+      else if(accountHistory[a][2] == "doge"){
+        doge -= dogePrice( accountHistory[a][0] ) * accountHistory[a][1];
+      }
+      else{
+        btc_purchases -= accountHistory[a][1];
+      }
+      a++;
+    }
+    account.push([ prices[p][0], btc * prices[p][1] ]);
+    purchases.push([ prices[p][0], btc_purchases * prices[p][1] ]);
+    spent.push([ prices[p][0], usd_out ]);
+    if(with_doge && doge){
+      doges.push([ prices[p][0], doge ]);
+    }
+  }
+
+  $("#profit").text( (account[account.length-1][1] + purchases[purchases.length-1][1] - spent[spent.length-1][1]).toFixed(2) );
+
+  $("#chartworld").highcharts({
+    yAxis: {
+      title: {
+        text: 'USD'
+      },
+      min: 10
+    },
+    title: {
+      text: ""
+    },
+    series: [{
+      name: "1 Bitcoin",
+      data: prices
+    },
+    {
+      name: "My Account",
+      data: account
+    },
+    {
+      name: "Purchases",
+      data: purchases
+    },
+    {
+      name: "Dogecoin",
+      data: doges
+    },
+    {
+      name: "USD in",
+      data: spent
+    }]
+  });
+}
+
+function dogePrice(date){
+  // estimate USD value of 1 Dogecoin at given day
+  var dt = (new Date(date)) * 1;
+  var btc_price = 0;
+  for(var d=0;d<pastDoge.length;d++){
+    if(pastDoge[d].time * 1 < dt){
+      btc_price = pastDoge[d].price;
+      break;
+    }
+  }
+  if(!btc_price){
+    btc_price = pastDoge[0].price;
+  }
+
+  for(var p=0;p<prices.length;p++){
+    if(prices[p][0] == date){
+      return btc_price * prices[p][1];
+    }
+  }
+}
     </script>
   </body>
 </html>

@@ -6,6 +6,7 @@
       "express": "3.X"
     , "jade": ">= 0.0.1"
     , "request": "2.21.X"
+    , "mongoose": "3.5.7"
   },
   "engines": {
         "node": "0.8.X",

@@ -8,7 +8,18 @@ Plots: 1 Bitcoin, My Account, Purchases (directly through Bitcoin), and USD Inpu
 
 Current BTC price from Coinbase; Historical BTC prices from Quandl
 
+
+**Add Dogecoin**
+
+Historical and current Dogecoin prices from Coins-E.com
+
+Add Heroku addons:
+
+    heroku addons:add scheduler:standard
+    heroku addons:add mongolab:sandbox
+
+Use scheduler to run a daily task:
+
+    node cache_doge.js
+
 **GPLv3+ license**
-
-
---> Using a node server to proxy in data from Quandl
