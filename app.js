@@ -34,7 +34,7 @@ app.get('/coin', function(req, res) {
         // before I entered the market - not interested
         return;
       }
-      prices.data.push([ data.datetime.split(" ")[0], data.average ]);
+      prices.data.push([ data.datetime.split(" ")[0], data.average * 1.0 ]);
     })
     .on('end',function(){
       res.json( prices );
