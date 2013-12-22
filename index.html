@@ -16,7 +16,7 @@ body{ margin: 25px; }
     either before. Trying to learn the economics of what I'm doing.</p>
     <p>Current BTC exchange rate from <a href="https://coinbase.com/docs/api/overview">Coinbase</a>; historical BTC from <a href="http://bitcoinaverage.com">BitcoinAverage.com</a>, historical Dogecoin from <a href="http://coins-e.com">Coins-E.com</a></p>
     <p>Lines are: 1 Bitcoin, My Account, Purchases (directly through Bitcoin), and USD in (lowers when I take money out)</p>
-    <p>Profit = Account + Purchases - USD_In = $<span id="profit"></span></p>
+    <p>Profit = Accounts + Purchases - USD_In = $<span id="profit"></span></p>
     <p>Source code <a href="https://github.com/mapmeld/bitcoin-stat">on GitHub</a></p>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
@@ -107,7 +107,12 @@ function plotCoins(currentRate, pastData, dogeData){
     }
   }
 
-  $("#profit").text( (account[account.length-1][1] + purchases[purchases.length-1][1] - spent[spent.length-1][1]).toFixed(2) );
+  if(with_doge){
+    $("#profit").text( (account[account.length-1][1] + doges[doges.length-1][1] + purchases[purchases.length-1][1] - spent[spent.length-1][1]).toFixed(2) );
+  }
+  else{
+    $("#profit").text( (account[account.length-1][1] + purchases[purchases.length-1][1] - spent[spent.length-1][1]).toFixed(2) );
+  }
 
   $("#chartworld").highcharts({
     yAxis: {
