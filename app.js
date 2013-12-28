@@ -55,6 +55,9 @@ app.get('/doge', function(req, res) {
     'uri': 'https://www.coins-e.com/api/v2/market/DOGE_BTC/trades/'
   };
   request(requestOptions, function (err, response, b) {
+    if(err){
+      return res.json([ ]);
+    }
     var prices = JSON.parse( b );
     var latestPrice = prices.trades[0].rate * 1.0;
     var dt = prices.trades[0].created * 1000;
