@@ -157,7 +157,12 @@ function bitcoinPerDoge(date){
     }
   }
   if(!btc_price){
-    btc_price = pastDoge[0].price;
+    if(!pastDoge.length){
+      btc_price = 0.00000074;
+    }
+    else{
+      btc_price = pastDoge[0].price;
+    }
   }
   return btc_price;
 }
