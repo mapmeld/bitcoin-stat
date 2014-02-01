@@ -79,7 +79,13 @@ function plotCoins(currentRate, pastData, dogeData){
   var doges = [ ];
   var doge = 0;
 
+  var lastDate = "";
   for(var p=0;p<prices.length;p++){
+    // prevent repeat days
+    if(prices[p][0] == lastDate){
+      continue;
+    }
+    lastDate = prices[p][0];
     var a = last_a;
     while(a < accountHistory.length){
       if(prices[p][0] == accountHistory[a][0]){
