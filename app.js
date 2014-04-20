@@ -30,7 +30,10 @@ app.get('/coin', function(req, res) {
   };
   request(requestOptions).pipe(csvStream)
     .on('data',function(data){
-      if( data.datetime.indexOf("2013-09") > -1 || data.datetime.indexOf("2013-10-0") > -1 ){
+      var tstamp = data.datetime.split("-");
+      tstamp = tstamp[0] * 100 + tstamp[1] * 1;
+      
+      if( tstamp < 201310 ){
         // before I entered the market - not interested
         return;
       }
