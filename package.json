@@ -3,10 +3,10 @@
   , "version": "0.0.1"
   , "private": true
   , "dependencies": {
-      "express": "3.X"
+      "express": "^4.15.4"
     , "jade": ">= 0.0.1"
-    , "request": "2.21.X"
-    , "mongoose": "3.5.7"
+    , "request": "~2.81.0"
+    , "mongoose": "4.11.11"
     , "csv-stream": "0.1.X"
   },
   "engines": {
