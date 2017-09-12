@@ -23,3 +23,5 @@ Use scheduler to run a daily task:
     node cache_doge.js
 
 **GPLv3+ license**
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/mapmeld/bitcoin-stat.svg)](https://greenkeeper.io/)
